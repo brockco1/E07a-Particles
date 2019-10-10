@@ -1,3 +1,4 @@
+
 import sys, logging, os, random, open_color, arcade
 
 version = (3,7)
@@ -8,6 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 
+import sys, logging, os, random, open_color, arcade
+
+version = (3,7)
+assert sys.version_info >= version, "This script requires at least Python {0}.{1}".format(version[0],version[1])
+
+logging.basicConfig(format='[%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -15,19 +24,24 @@ MARGIN = 30
 SCREEN_TITLE = "Particle Exercise"
 
 PARTICLE_MIN_SCALE = 0.01
-PARTICLE_MAX_SCALE = 0.08
-PARTICLE_MIN_X = -20
-PARTICLE_MAX_X = 20
-PARTICLE_VELOCITY_X = 0
+PARTICLE_MAX_SCALE = 0.5
+PARTICLE_MIN_X = 0.5
+PARTICLE_MAX_X = 0.1
+PARTICLE_VELOCITY_X = 0.5
 PARTICLE_VELOCITY_Y = 4
 PARTICLE_MIN_AX = -0.1
-PARTICLE_MAX_AX = 0.1
-PARTICLE_MIN_AY = -0.1
-PARTICLE_MAX_AY = 0.1
-PARTICLE_MIN_DECAY = 0.001
-PARTICLE_MAX_DECAY = 0.01
+PARTICLE_MAX_AX = 0.001
+PARTICLE_MIN_AY = 0.0000000001
+PARTICLE_MAX_AY = 0.000000000000001
+PARTICLE_MIN_DECAY = 0.000003
+PARTICLE_MAX_DECAY = -0.0001
 
-
+import winsound
+class Sound(arcade.Sprite):
+    def __init__(self):
+        super().__init__winsound.PlaySound("assets/65748_dobroide_20081231-fire-02.wav", winsound.SND_ASYNC)
+        self.mouse_down = True
+ 
 class Particle(arcade.Sprite):
     def __init__(self, asset, scale, x, y, dx, dy, ax, ay, decay):
         super().__init__("assets/{}.png".format(asset), scale)
@@ -41,16 +55,16 @@ class Particle(arcade.Sprite):
         self.color_pos = 0
 
         self.particle_colors = [
-            (open_color.red_5, 4)
-            ,(open_color.red_4, 5)
-            ,(open_color.red_3, 6)
-            ,(open_color.red_2, 7)
-            ,(open_color.red_1, 8)
-            ,(open_color.teal_1, 8)
-            ,(open_color.teal_2, 7)
-            ,(open_color.teal_3, 6)
-            ,(open_color.teal_4, 5)
-            ,(open_color.teal_5, 4)
+            (open_color.red_9, 4)
+            ,(open_color.red_7, 5)
+            ,(open_color.red_6, 6)
+            ,(open_color.red_5, 7)
+            ,(open_color.yellow_5, 8)
+            ,(open_color.yellow_1, 8)
+            ,(open_color.gray_2, 7)
+            ,(open_color.gray_3, 6)
+            ,(open_color.gray_4, 5)
+            ,(open_color.gray_5, 4)
         ]
         (self.color, self.lifetime) = self.particle_colors[self.color_pos]
         self.alive = True
@@ -73,10 +87,7 @@ class Particle(arcade.Sprite):
                 (self.color, self.lifetime) = self.particle_colors[self.color_pos]
 
 
-
-
         
-
 
 class Window(arcade.Window):
 
@@ -110,8 +121,8 @@ class Window(arcade.Window):
             decay = random.uniform(PARTICLE_MIN_DECAY,PARTICLE_MAX_DECAY)
             scale = random.uniform(PARTICLE_MIN_SCALE,PARTICLE_MAX_SCALE)
             #Particle(asset, sprite scale, initial position [x], initial position [y], velocity [x], velocity [y], acceleration [x], acceleration [y], scale decay)
-            particle = Particle('circle_05',scale,x,y,dx,dy,ax,ay,decay)
-
+            particle = Particle('flame_03',scale,x,y,dx,dy,ax,ay,decay)
+           
             self.particle_list.append(particle)
 
         for p in self.particle_list:
@@ -121,7 +132,6 @@ class Window(arcade.Window):
             #if it has reached the end of its life
             if not p.alive:
                 p.kill
-
 
     def on_draw(self):
         arcade.start_render()
@@ -141,12 +151,10 @@ class Window(arcade.Window):
         self.x = x
         self.y = y
 
-
 def main():
     window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.setup()
     arcade.run()
-
 
 if __name__ == "__main__":
     main()
